@@ -3,10 +3,11 @@
 namespace Advent;
 
 use DataLoader;
+use Exception;
 
 class ProgramAlarm implements AdventOutputInterface
 {
-    private $debug = true;
+    private $debug = false;
 
     /**
      * Guess 1: 106699 -- To Low
@@ -15,33 +16,65 @@ class ProgramAlarm implements AdventOutputInterface
      * I now realize I'm dumb and didn't read the instructions as fully as I should have. Missed replacing 1 and 2.
      * Guess 4: 4714701 -- Finally, got it.
      *
+     * Part 2
+     * Guess 1: 5121 -- Correct
+     *
      * @var string
      */
     private $dataFile = '1202ProgramAlarm.txt';
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function display()
     {
-        $input = DataLoader::loadFileAsArrayData($this->dataFile);
+        $input   = DataLoader::loadFileAsArrayData($this->dataFile);
+        $program = explode(',', $input[0]);
 
-        $program = $this->runProgram($input[0], false);
-        $programString = implode(',', $program);
+        // Replace the two numbers as per the instructions
+        $program[1] = 12;
+        $program[2] = 2;
 
-        echo (sprintf('Part 1: Int at Index 0: %d of full Program: %s', $program[0], $programString) . "\n");
+        // Part 1
+        $programAnswer = $this->runProgram($program, false);
+        $programString = implode(',', $programAnswer);
+
+        echo ("\n" . sprintf('Part 1: Int at Index 0: %d of full Program: %s', $programAnswer[0], $programString) . "\n\n");
+
+        // Part 2
+        $noun   = 0;
+        $answer = 0;
+        while ($noun < 100) {
+            $verb = 0;
+            while ($verb < 100) {
+                // Set test values
+                $program[1] = $noun;
+                $program[2] = $verb;
+
+                // Run and verify
+                $programValue = $this->runProgram($program, true);
+
+                if (19690720 === $programValue) {
+                    $answer = 100 * $noun + $verb;
+                    break 2;
+                }
+
+                $verb++;
+            }
+            $noun++;
+        }
+
+        echo (sprintf('Part 2: Noun - %s Verb - %s Answer - %s', $noun, $verb, $answer) . "\n\n");
     }
 
     /**
-     * @param string $input
+     * @param int[] $program
      *
      * @return int[]|int
      */
-    public function runProgram($input, $returnSingle = true)
+    public function runProgram($program, $returnSingle = true)
     {
-        $program = explode(',', $input);
-
         $index = 0;
         $terminateProgram = false;
         $stepCount = 1;
@@ -112,7 +145,7 @@ class ProgramAlarm implements AdventOutputInterface
     /**
      * Used for testing, just to give an output of the current array.
      *
-     * @param array[] $program
+     * @param int[] $program
      * @param int     $length
      *
      * @return void
