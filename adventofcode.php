@@ -8,12 +8,9 @@
  * @date 01/04/2017
  */
 
-use Advent\BathroomCodes;
-use Advent\BunnyHQ;
-use Advent\RealRooms;
-use Advent\RepetitionCodes;
-use Advent\SecurityCode;
-use Advent\ValidDesigns;
+use Advent\CrossedWires;
+use Advent\ProgramAlarm;
+use Advent\RequiredFuel;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -22,12 +19,14 @@ $adventDay    = null;
 
 switch ($adventString) {
     case 'fuel_req':
-        $adventDay = new \Advent\RequiredFuel();
+        $adventDay = new RequiredFuel();
         break;
     case 'program_alarm':
-        $adventDay = new \Advent\ProgramAlarm();
+        $adventDay = new ProgramAlarm();
         break;
-
+    case 'crossed_wires':
+        $adventDay = new CrossedWires();
+        break;
 }
 
 if (!is_null($adventDay)) {
